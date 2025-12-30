@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Malzeme Düzenle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .home-icon {
+            color: #333;
+            font-size: 22px;
+            text-decoration: none;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 25px;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <div class="header-container">
+            <a th:href="@{/}" class="home-icon"><i class="fa-solid fa-house"></i></a>
+            <h2>Malzeme Düzenle</h2>
+        </div>
+        <form th:action="@{/isler/{isId}/malzeme/update/{mId}(isId=${isId}, mId=${malzeme.id})}" th:object="${malzeme}"
+            method="post">
+            <label>Malzeme Adı:</label>
+            <input type="text" th:field="*{malzemeAdi}" required>
+            <label>Adet:</label>
+            <input type="number" th:field="*{adet}" min="1" required>
+            <label>Birim Fiyat (TL):</label>
+            <input type="number" th:field="*{birimFiyat}" step="0.01" required>
+            <button type="submit">Güncelle</button>
+        </form>
+    </div>
+</body>
+
+</html>

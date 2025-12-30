@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>İş Detayları</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .home-icon {
+            color: #333;
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        .home-icon:hover {
+            color: #007bff;
+        }
+
+        h1 {
+            color: #007bff;
+            margin: 0;
+        }
+
+        .is-info {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin-bottom: 20px;
+        }
+
+        .malzeme-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+        }
+
+        .malzeme-table th,
+        .malzeme-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .malzeme-table th {
+            background-color: #e9ecef;
+        }
+
+        .add-form {
+            background: #f1f1f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .add-form input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .add-form button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 0.85em;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-container">
+        <a th:href="@{/}" class="home-icon" title="Ana Sayfa"><i class="fa-solid fa-house"></i></a>
+        <h1 th:text="${is.isAdi}"></h1>
+    </div>
+
+    <div th:if="${successMessage}"
+        style="padding: 10px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 10px;">
+        [[${successMessage}]]
+    </div>
+
+    <div class="is-info">
+        <p><strong>Durum:</strong> [[${is.durum}]]
+        <p><strong>Ücret:</strong> [[${#numbers.formatDecimal(is.ucret, 1,
+            'DEFAULT', 2, 'DEFAULT')}]] TL</p>
+        </p>
+        <p><strong>Başlama Tarihi:</strong> [[${#temporals.format(is.baslamaTarihi, 'dd/MM/yyyy')}]]</p>
+    </div>
+
+    <h3>📦 Malzeme Ekle</h3>
+    <form th:action="@{/isler/{isId}/malzeme/add(isId=${is.id})}" th:object="${malzeme}" method="post" class="add-form">
+        <input type="text" th:field="*{malzemeAdi}" placeholder="Malzeme Adı" required>
+        <input type="number" th:field="*{adet}" placeholder="Adet" min="1" required>
+        <input type="number" th:field="*{birimFiyat}" placeholder="Birim Fiyat" step="0.01" required>
+        <button type="submit">Ekle</button>
+    </form>
+
+    <table class="malzeme-table">
+        <thead>
+            <tr>
+                <th>Malzeme</th>
+                <th>Adet</th>
+                <th>Birim Fiyat</th>
+                <th>Toplam</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="m : ${malzemeler}">
+                <td th:text="${m.malzemeAdi}"></td>
+                <td th:text="${m.adet}"></td>
+                <td th:text="${#numbers.formatDecimal(m.birimFiyat, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                <td th:text="${#numbers.formatDecimal(m.toplamFiyat, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                <td>
+                    <a th:href="@{/isler/{isId}/malzeme/edit/{mId}(isId=${is.id}, mId=${m.id})}" class="btn-small"
+                        style="background:#ffc107; color:black;">✏️ Düzenle</a>
+                    <a th:href="@{/isler/{isId}/malzeme/delete/{mId}(isId=${is.id}, mId=${m.id})}" class="btn-small"
+                        style="background:#dc3545;" onclick="return confirm('Silinsin mi?')">🗑️ Sil</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
