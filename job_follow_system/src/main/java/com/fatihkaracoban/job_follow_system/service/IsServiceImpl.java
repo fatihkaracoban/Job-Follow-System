@@ -16,19 +16,13 @@ public class IsServiceImpl implements IIsService {
 
     private final IIsRepository isRepository;
 
-    // Spring 4.3'ten sonra tek constructor varsa @Autowired yazmaya gerek yoktur.
     public IsServiceImpl(IIsRepository isRepository) {
         this.isRepository = isRepository;
     }
 
     @Override
     public List<Is> getAll() {
-        return isRepository.findAll();
-    }
-
-    @Override
-    public List<Is> getIslerByDurum(String durum) {
-        return isRepository.findByDurum(durum);
+        return isRepository.findByAktifTrue();
     }
 
     @Override
@@ -38,53 +32,34 @@ public class IsServiceImpl implements IIsService {
 
     @Override
     public Is isKaydet(Is is) {
-        // --- KRİTİK BÖLÜM: Malzeme Silinmesini Engelleme ---
         if (is.getId() != null) {
-            isRepository.findById(is.getId()).ifPresent(existingIs -> {
-                if (existingIs.getMalzemeler() != null) {
-                    is.setMalzemeler(existingIs.getMalzemeler());
+            isRepository.findById(is.getId()).ifPresent(existing -> {
+                if (is.getMalzemeler() == null) {
+                    is.setMalzemeler(existing.getMalzemeler());
                 }
             });
         }
-
-        if (is.getDurum() == null || is.getDurum().isEmpty()) {
-            is.setDurum("Yapılacak");
-        }
-
-        if (is.getMalzemeler() != null) {
-            is.getMalzemeler().forEach(malzeme -> malzeme.setIs(is));
-        }
-
         return isRepository.save(is);
     }
 
     @Override
-    public void isBitir(Integer id) {
-        // İhtiyaç varsa buraya mantık eklenebilir.
-    }
-
-    @Override
     public void isSil(Integer id) {
-        isRepository.deleteById(id);
+        Is is = isGetirById(id);
+        if (is != null) {
+            is.setAktif(false); // Yumuşak silme
+            isRepository.save(is);
+        }
     }
 
     @Override
     public List<Is> getHatirlatilacakIsler() {
-        return isRepository.findAll().stream()
+        LocalDate bugun = LocalDate.now();
+        LocalDate yediGunSonra = bugun.plusDays(7);
+        return getAll().stream()
                 .filter(is -> "Yapılacak".equals(is.getDurum()))
-                .filter(is -> {
-                    // HATA DÜZELTİLDİ: Artık parse işlemine gerek yok.
-                    LocalDate baslamaTarihi = is.getBaslamaTarihi();
-                    if (baslamaTarihi == null) {
-                        return false;
-                    }
-
-                    LocalDate bugun = LocalDate.now();
-                    LocalDate yediGunSonra = bugun.plusDays(7);
-
-                    // Bugün veya bugünden sonraki 7 gün içindeki işleri filtreler
-                    return !baslamaTarihi.isBefore(bugun) && baslamaTarihi.isBefore(yediGunSonra);
-                })
+                .filter(is -> is.getBaslamaTarihi() != null
+                && !is.getBaslamaTarihi().isBefore(bugun)
+                && is.getBaslamaTarihi().isBefore(yediGunSonra))
                 .toList();
     }
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,16 +18,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "malzemeler")
 public class Malzeme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Double birimFiyat;
-    private Double toplamFiyat;
     private String malzemeAdi;
     private Integer adet;
+    private Double birimFiyat;
+    private Double toplamFiyat;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "is_id", nullable = false)

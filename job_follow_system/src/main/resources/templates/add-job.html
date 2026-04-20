@@ -1,98 +1,76 @@
 <!DOCTYPE html>
-<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<html lang="tr" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <title>Yeni İş Ekle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .form-container {
-            width: 100%;
-            max-width: 500px;
-            padding: 25px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background: white;
-        }
-
-        .header-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .home-icon {
-            color: #333;
-            font-size: 24px;
-            text-decoration: none;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 1.5em;
-            color: #28a745;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="form-container">
-        <div class="header-container">
-            <a th:href="@{/}" class="home-icon"><i class="fa-solid fa-house"></i></a>
-            <h1>Yeni İş Ekle</h1>
+<body class="bg-body-tertiary">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-tasks me-2"></i>İş Takip Sistemi</a>
         </div>
-        <form th:action="@{/add}" th:object="${is}" method="post">
-            <label>İş Adı:</label>
-            <input type="text" th:field="*{isAdi}" required>
-            <label>Başlama Tarihi:</label>
-            <input type="date" th:field="*{baslamaTarihi}" required>
-            <label>Ücret (TL):</label>
-            <input type="number" th:field="*{ucret}" step="0.01" required>
-            <label>Durum:</label>
-            <select th:field="*{durum}">
-                <option value="Yapılacak">Yapılacak</option>
-                <option value="Devam Ediyor">Devam Ediyor</option>
-                <option value="Beklemede">Beklemede</option>
-                <option value="Tamamlandı">Tamamlandı</option>
-            </select>
-            <button type="submit">İşi Kaydet</button>
-        </form>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-success text-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Yeni İş Kaydı Oluştur</h5>
+                    </div>
+                    <div class="card-body p-4">
+
+                        <form th:action="@{/add}" th:object="${is}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">İşin Adı</label>
+                                <input type="text" class="form-control" th:field="*{isAdi}"
+                                    placeholder="Örn: Mutfak Dolabı Montajı">
+                                <div class="text-danger mt-1 small" th:if="${#fields.hasErrors('isAdi')}"
+                                    th:errors="*{isAdi}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold"><i class="fas fa-map-marker-alt me-2"></i>İş
+                                    Adresi</label>
+                                <textarea class="form-control" th:field="*{adres}" rows="3"
+                                    placeholder="İşin yapılacağı açık adres..."></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Başlama Tarihi</label>
+                                    <input type="date" class="form-control" th:field="*{baslamaTarihi}">
+                                    <div class="text-danger mt-1 small" th:if="${#fields.hasErrors('baslamaTarihi')}"
+                                        th:errors="*{baslamaTarihi}"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Toplam Ücret (TL)</label>
+                                    <input type="number" step="0.01" class="form-control" th:field="*{ucret}"
+                                        placeholder="Örn: 5000">
+                                    <div class="text-danger mt-1 small" th:if="${#fields.hasErrors('ucret')}"
+                                        th:errors="*{ucret}"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a th:href="@{/}" class="btn btn-secondary"><i
+                                        class="fas fa-arrow-left me-1"></i>Listeye Dön</a>
+                                <button type="submit" class="btn btn-success"><i
+                                        class="fas fa-save me-1"></i>Kaydet</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </body>
 
 </html>
